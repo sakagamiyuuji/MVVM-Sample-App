@@ -4,15 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mvvmsampleapp.data.network.AuthResponse
 import com.example.mvvmsampleapp.data.network.MyApi
+import com.example.mvvmsampleapp.data.network.SafeApiRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class UserRepository {
+class UserRepository : SafeApiRequest(){
 
-    suspend fun userLogin(email: String, password: String) : Response<AuthResponse>/*LiveData<String>*/ {
-        return MyApi().userLogin(email, password)
+    suspend fun userLogin(email: String, password: String) : AuthResponse/*Coroutines Response<AuthResponse>*/  /*LiveData<String>*/ {
+
+        return apiRequest {MyApi().userLogin(email, password)}
+
+        //Coroutines
+        //return MyApi().userLogin(email, password)
 
 /*        val loginResponse = MutableLiveData<String>()
 
