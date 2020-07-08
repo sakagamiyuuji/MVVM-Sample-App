@@ -1,17 +1,23 @@
 package com.example.mvvmsampleapp.ui.auth
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModel
 import com.example.mvvmsampleapp.data.repositories.UserRepository
 import com.example.mvvmsampleapp.util.ApiExcepetion
 import com.example.mvvmsampleapp.util.Coroutines
+import kotlin.math.log
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(
+    private val repository: UserRepository
+) : ViewModel() {
 
     var email: String? = null
     var password:String? = null
 
     var authListener: AuthListener? = null
+
+    fun getLoggedInUser() = repository.getUser()
 
     fun onLoginButtonClick(view: View){
         authListener?.onStarted()
@@ -23,14 +29,20 @@ class AuthViewModel : ViewModel() {
 
         Coroutines.main {
             try {
-                val authResponse = UserRepository().userLogin(email!!, password!!)
+                val authResponse = repository.userLogin(email!!, password!!)
+                //Sebelum injection
+                //val authResponse = UserRepository().userLogin(email!!, password!!)
                 authResponse.user?.let {
                     authListener?.onSucces(it)
+                    Log.d("userCheck", it.toString())
+                    repository.saveUser(it)
+                    return@main
                 }
                 authListener?.onFailure(authResponse.message!!)
-                return@main
+
 
             } catch (e: ApiExcepetion){
+
                 authListener?.onFailure(e.message!!)
             }
 

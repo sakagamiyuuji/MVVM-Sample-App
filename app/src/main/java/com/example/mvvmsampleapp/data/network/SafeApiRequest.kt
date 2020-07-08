@@ -1,5 +1,6 @@
 package com.example.mvvmsampleapp.data.network
 
+import android.util.Log
 import com.example.mvvmsampleapp.util.ApiExcepetion
 import org.json.JSONException
 import org.json.JSONObject
@@ -14,17 +15,23 @@ abstract class SafeApiRequest{
             return response.body()!!
         } else{
             val error = response.errorBody()?.string()
+            if (error != null) {
+                Log.d("errorBody", error)
+            }
+
             val message = StringBuilder()
             error?.let {
                 try {
                     val messages = JSONObject(it).getString("message")
                     message.append(messages)
+                    Log.d("errorMessageJson", messages)
                 }
                 catch (e: JSONException){ }
                 message.append("\n")
             }
 
             message.append("Error Code: ${response.code()}")
+            Log.d("errorCode", "${response.code()}")
 
             throw ApiExcepetion(message.toString())
         }
