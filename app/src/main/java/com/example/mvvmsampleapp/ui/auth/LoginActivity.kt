@@ -13,6 +13,7 @@ import com.example.mvvmsampleapp.R
 import com.example.mvvmsampleapp.data.db.AppDatabase
 import com.example.mvvmsampleapp.data.db.entities.User
 import com.example.mvvmsampleapp.data.network.MyApi
+import com.example.mvvmsampleapp.data.network.NetworkConnectionInterceptor
 import com.example.mvvmsampleapp.data.repositories.UserRepository
 import com.example.mvvmsampleapp.databinding.ActivityLoginBinding
 import com.example.mvvmsampleapp.ui.home.HomeActivity
@@ -21,15 +22,27 @@ import com.example.mvvmsampleapp.util.show
 import com.example.mvvmsampleapp.util.snackbar
 import com.example.mvvmsampleapp.util.toast
 import kotlinx.android.synthetic.main.activity_login.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.kodein
+import org.kodein.di.generic.instance
 
-class LoginActivity : AppCompatActivity(), AuthListener {
+class LoginActivity : AppCompatActivity(), AuthListener, KodeinAware {
+
+    override val kodein by kodein()
+
+
+
+    private val factory : AuthViewModelFactory by instance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val api =  MyApi()
+        /*DELETE AFTER KODEIN FRAMEWORK
+        val networkConnectionInterceptor = NetworkConnectionInterceptor(this)
+        val api =  MyApi(networkConnectionInterceptor)
         val db = AppDatabase(this)
         val repository = UserRepository(api, db)
-        val factory = AuthViewModelFactory(repository)
+        val factory = AuthViewModelFactory(repository)*/
 
         val binding: ActivityLoginBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_login)

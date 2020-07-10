@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.mvvmsampleapp.data.repositories.UserRepository
 import com.example.mvvmsampleapp.util.ApiExcepetion
 import com.example.mvvmsampleapp.util.Coroutines
+import com.example.mvvmsampleapp.util.NoInternetException
 import kotlin.math.log
 
 class AuthViewModel(
@@ -29,6 +30,7 @@ class AuthViewModel(
 
         Coroutines.main {
             try {
+
                 val authResponse = repository.userLogin(email!!, password!!)
                 //Sebelum injection
                 //val authResponse = UserRepository().userLogin(email!!, password!!)
@@ -42,7 +44,8 @@ class AuthViewModel(
 
 
             } catch (e: ApiExcepetion){
-
+                authListener?.onFailure(e.message!!)
+            } catch (e: NoInternetException){
                 authListener?.onFailure(e.message!!)
             }
 

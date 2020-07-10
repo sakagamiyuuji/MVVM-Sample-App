@@ -1,5 +1,6 @@
 package com.example.mvvmsampleapp.data.network
 
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -16,11 +17,22 @@ interface MyApi {
     suspend fun userLogin(
         @Field("email") email: String,
         @Field("password") password: String
-    ) : Response<AuthResponse>  //Call<ResponseBody>
+    ): Response<AuthResponse>  //Call<ResponseBody>
 
-    companion object{
-        operator fun invoke(): MyApi{
+    companion object {
+
+        operator fun invoke(
+            networkConnectionInterceptor: NetworkConnectionInterceptor
+        ): MyApi {
+
+            //No Internet Connection Handling
+            val okkHttpClient = OkHttpClient.Builder()
+                .addInterceptor(networkConnectionInterceptor)
+                .build()
+
+
             return Retrofit.Builder()
+                .client(okkHttpClient)
                 .baseUrl("https://api.simplifiedcoding.in/course-apis/mvvm/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
